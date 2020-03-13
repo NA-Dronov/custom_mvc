@@ -1,0 +1,13 @@
+{% extends "layout.html" %} {% block title %}Not found{% endblock %} {% block
+head%} {{ parent() }}
+<style type="text/css">
+  .important {
+    color: #336699;
+  }
+</style>
+{% endblock %} {% block content %}
+<h1>Index</h1>
+<p class="important">
+  The requested page was not found.
+</p>
+{% endblock %}

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% if devMode == true %}Error report{% else %}Site closed{% endif %}
+    </title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: Verdana, Geneva, sans-serif;
+      }
+
+      header {
+        background-color: #6466d3;
+        padding: 1rem;
+      }
+
+      .error-logo {
+        display: block;
+        max-width: 300px;
+        height: auto;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .error-section {
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 1rem;
+        background-color: #eee;
+      }
+
+      .message-section {
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 2rem;
+        text-align: center;
+        border: 2px solid #6466d3;
+        padding: 2rem;
+        border-radius: 2rem;
+      }
+
+      .error-info {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .error-info__line {
+        display: flex;
+        flex-direction: row;
+        border-right: 2px solid #eee;
+        border-left: 2px solid #eee;
+        border-bottom: 2px solid #eee;
+        align-items: stretch;
+        justify-content: space-between;
+      }
+
+      .error-info__title {
+        width: calc(10% - 2px);
+        padding-left: 0.5rem;
+        padding: 1rem;
+        background-color: #fff;
+      }
+
+      .error-info__data {
+        width: 90%;
+        align-self: center;
+        padding: 1rem;
+        background-color: #fff;
+      }
+
+      .error-trace {
+        table-layout: fixed;
+        width: 100%;
+      }
+
+      .error-trace th {
+        background-color: #6466d3;
+        color: #fff;
+        padding: 1rem;
+      }
+
+      .error-trace td {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        padding: 0.5rem;
+        background-color: #fff;
+      }
+
+      .row-file {
+        width: 30%;
+      }
+
+      .row-line {
+        width: 5%;
+        text-align: center;
+      }
+
+      .row-func {
+        width: 20%;
+        text-align: center;
+      }
+
+      .row-class {
+        width: 30%;
+      }
+
+      .row-args {
+        width: 15%;
+        text-align: center;
+      }
+
+      .button,
+      .button-block {
+        display: inline-block;
+        color: #fff;
+        background-color: #6466d3;
+        border: 1px solid #6466d3;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        text-align: center;
+      }
+
+      .button:hover,
+      .button-block:hover {
+        color: #6466d3;
+        background-color: #fff;
+      }
+
+      .button-block {
+        display: block;
+      }
+
+      .button:hover,
+      .button-block:hover,
+      .close:hover {
+        cursor: pointer;
+      }
+
+      .p-1 {
+        padding: 1rem;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        top: 0;
+        left: 0;
+        padding-top: 100px;
+        width: 100vw;
+        height: 100vh;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-window {
+        max-width: 80%;
+        min-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: white;
+      }
+
+      .modal-header {
+        margin: 0;
+        padding: 0.5rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background-color: #6466d3;
+      }
+
+      .modal-header .close,
+      .modal-header .title {
+        color: #eee;
+        font-weight: bold;
+      }
+
+      .modal-header .close {
+        font-size: 2rem;
+        margin-left: auto;
+        width: 2rem;
+      }
+      .modal-header .title {
+        font-size: 1.5rem;
+        width: calc(100% - 2rem);
+        text-align: center;
+      }
+      .modal-content {
+        padding: 2rem;
+      }
+      .modal-content > * {
+        background-color: #eeeeeeb9;
+        margin: 0;
+        font-size: 1.2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="{{ROOT}}/img/error.png" class="error-logo" />
+    </header>
+    <section class="{{ devMode ? 'error' : 'message' }}-section">
+      {% if devMode == true %}
+      <ul class="error-info">
+        <li class="error-info__line">
+          <div class="error-info__title">Message:</div>
+          <div class="error-info__data">{{errorMessage.message}}</div>
+        </li>
+        <li class="error-info__line">
+          <div class="error-info__title">Code:</div>
+          <div class="error-info__data">{{errorMessage.code}}</div>
+        </li>
+        <li class="error-info__line">
+          <div class="error-info__title">File:</div>
+          <div class="error-info__data">{{errorMessage.file}}</div>
+        </li>
+        <li class="error-info__line">
+          <div class="error-info__title">Line:</div>
+          <div class="error-info__data">{{errorMessage.line}}</div>
+        </li>
+      </ul>
+      {% if errorMessage.trace %}
+      <table class="error-trace">
+        <thead>
+          <tr>
+            <th class="row-file">File</th>
+            <th class="row-line">Line</th>
+            <th class="row-func">Function</th>
+            <th class="row-class">Class</th>
+            <th class="row-args">Args</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for elmIndex, elm in errorMessage.trace %}
+          <tr>
+            <td>{{elm.file}}</td>
+            <td class="row-line">{{elm.line}}</td>
+            <td class="row-func">{{elm.function}}</td>
+            <td>{{elm.class}}</td>
+            <td class="row-args">
+              {% if elm.args %}
+              <a onclick="openModal('modal_{{elmIndex}}')" class="button"
+                >Show</a
+              >
+              {% else %} &mdash; {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if errorMessage.xdebug_message %}
+      <div class="p-1">
+        <div class="button-block" onclick="openModal('modal_xdebug')">
+          Show XDebug Log
+        </div>
+      </div>
+
+      <!-- The Modal -->
+      <div id="modal_xdebug" class="modal">
+        <!-- Modal content -->
+        <div class="modal-window">
+          <div class="modal-header">
+            <span class="title">XDEBUG Message</span>
+            <span class="close" onclick="closeModal('modal_xdebug')"
+              >&times;</span
+            >
+          </div>
+          <div class="modal-body">
+            <div class="modal-content">
+              <pre style="white-space: pre-line;">
+                {{errorMessage.xdebug_message|raw }}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %} {% for elmIndex, elm in errorMessage.trace %} {% if elm.args
+      %}
+      <!-- The Modal -->
+      <div id="modal_{{elmIndex}}" class="modal">
+        <!-- Modal content -->
+        <div class="modal-window">
+          <div class="modal-header">
+            <span class="title">Args List</span>
+            <span class="close" onclick="closeModal('modal_{{elmIndex}}')"
+              >&times;</span
+            >
+          </div>
+          <div class="modal-body">
+            <div class="modal-content">
+              {{dump(elm.args)}}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %} {% endfor %} {% endif %} {% else %}
+      <p style="font-size: 2rem; text-align: center;">
+        Sorry, but the site is temporarily down.
+      </p>
+      {% endif %}
+    </section>
+    <script>
+      function openModal(id) {
+        let modal = document.getElementById(id);
+        modal.style.display = "block";
+      }
+
+      function closeModal(id) {
+        let modal = document.getElementById(id);
+        modal.style.display = "none";
+      }
+    </script>
+  </body>
+</html>

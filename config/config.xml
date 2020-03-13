@@ -1,0 +1,12 @@
+<config>
+    <dev_mode>1</dev_mode>
+    <db_host>localhost</db_host>
+    <db_name>test</db_name>
+    <db_user>ndronov</db_user>
+    <db_password>1wNmOfsTCmE#</db_password>
+    <url_root>/custom_mvc/public</url_root>
+    <default_controller>home</default_controller>
+    <default_action>index</default_action>
+    <app_ver>1.0.0</app_ver>
+    <app_name>MVC FRAMEWORK</app_name>
+</config>

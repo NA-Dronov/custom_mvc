@@ -1,0 +1,18 @@
+{
+  "config": {
+    "vendor-dir": "app/vendor"
+  },
+  "require": {
+    "twig/twig": "^2.0"
+  },
+  "autoload": {
+    "classmap": [
+      "app/core/",
+      "app/default/",
+      "app/mappers/"
+    ],
+    "files": [
+      "config/defines.php"
+    ]
+  }
+}
